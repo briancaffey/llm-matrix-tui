@@ -1,0 +1,62 @@
+[project]
+name = "matrix-tui"
+version = "0.0.2"
+description = "Matrix-style TUI visualizing concurrent LLM streaming"
+requires-python = ">=3.11"
+authors = [
+    {name = "Matrix TUI Team", email = "team@example.com"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+dependencies = [
+    "python-dotenv>=1.0.1",
+    "openai>=1.40.0",
+    "blessed>=1.20.0",
+    "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=24.3.0"
+]
+
+[project.scripts]
+matrix-tui = "matrix_tui.__main__:main"
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest-asyncio>=1.2.0",
+]

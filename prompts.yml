@@ -1,0 +1,389 @@
+prompts:
+  # English Prompts
+  - prompt: "Explain artificial intelligence in detail, covering its history, current applications, and future potential."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Describe machine learning algorithms and their real-world applications in various industries."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Discuss the future of technology and automation, including potential impacts on society and employment."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Explain quantum computing and its potential revolutionary impact on cryptography and problem-solving."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Describe blockchain technology and its applications beyond cryptocurrencies."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Discuss renewable energy technologies and their role in combating climate change."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Explain space exploration missions and the challenges of Mars colonization."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Describe biotechnology and genetic engineering advances in medicine and agriculture."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "What are the ethical implications of artificial intelligence development?"
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "How do neural networks learn and make decisions?"
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  # Chinese Prompts (Simplified)
+  - prompt: "详细解释人工智能的历史、现状和未来发展趋势。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "描述机器学习算法及其在各个行业的实际应用。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "讨论技术自动化的未来及其对社会和就业的潜在影响。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "解释量子计算及其对密码学和问题解决的革命性影响。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "描述区块链技术及其在加密货币之外的应用。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "讨论可再生能源技术及其在应对气候变化中的作用。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "解释太空探索任务和火星殖民的挑战。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "描述生物技术和基因工程在医学和农业方面的进展。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "人工智能发展有哪些伦理影响？"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "神经网络是如何学习和做决策的？"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  # Japanese Prompts
+  - prompt: "人工知能の歴史、現状、将来の可能性について詳しく説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "機械学習アルゴリズムとその様々な産業での実用的な応用について説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "技術と自動化の未来、社会と雇用への潜在的な影響について議論してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "量子コンピューティングとその暗号学と問題解決への革命的な影響について説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "ブロックチェーン技術と暗号通貨以外での応用について説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "再生可能エネルギー技術と気候変動対策での役割について議論してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "宇宙探査ミッションと火星植民の課題について説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "バイオテクノロジーと遺伝子工学の医学と農業での進歩について説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "人工知能の発展にはどのような倫理的影響がありますか？"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "ニューラルネットワークはどのように学習し、意思決定を行うのでしょうか？"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  # Korean Prompts
+  - prompt: "인공지능의 역사, 현재 상황, 미래 가능성에 대해 자세히 설명해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "머신러닝 알고리즘과 다양한 산업에서의 실제 응용에 대해 설명해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "기술과 자동화의 미래, 사회와 고용에 미칠 잠재적 영향에 대해 논의해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "양자 컴퓨팅과 암호학 및 문제 해결에 미칠 혁신적 영향에 대해 설명해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "블록체인 기술과 암호화폐 외의 응용에 대해 설명해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "재생 가능 에너지 기술과 기후 변화 대응에서의 역할에 대해 논의해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "우주 탐사 임무와 화성 식민지화의 도전에 대해 설명해주세요."
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "생명공학과 유전공학의 의학과 농업 분야 진보에 대해 설명해주세요."
+    system_prompt: "당신은 도움이 되는 어시ス턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "인공지능 발전에는 어떤 윤리적 영향이 있나요?"
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  - prompt: "신경망은 어떻게 학습하고 의사결정을 하나요?"
+    system_prompt: "당신은 도움이 되는 어시스턴트입니다. 한국어로 답변해주세요."
+    lang: "ko"
+
+  # Russian Prompts
+  - prompt: "Подробно объясните историю, текущее состояние и будущий потенциал искусственного интеллекта."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Опишите алгоритмы машинного обучения и их практическое применение в различных отраслях."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Обсудите будущее технологий и автоматизации, включая потенциальное влияние на общество и занятость."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Объясните квантовые вычисления и их революционное влияние на криптографию и решение проблем."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Опишите технологию блокчейн и её применение помимо криптовалют."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Обсудите технологии возобновляемой энергии и их роль в борьбе с изменением климата."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Объясните космические исследовательские миссии и вызовы колонизации Марса."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Опишите достижения биотехнологии и генной инженерии в медицине и сельском хозяйстве."
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Какие этические последствия имеет развитие искусственного интеллекта?"
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  - prompt: "Как нейронные сети учатся и принимают решения?"
+    system_prompt: "Вы полезный помощник. Пожалуйста, отвечайте на русском языке."
+    lang: "ru"
+
+  # French Prompts
+  - prompt: "Expliquez en détail l'histoire, l'état actuel et le potentiel futur de l'intelligence artificielle."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Décrivez les algorithmes d'apprentissage automatique et leurs applications pratiques dans diverses industries."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Discutez de l'avenir de la technologie et de l'automatisation, y compris les impacts potentiels sur la société et l'emploi."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Expliquez l'informatique quantique et son impact révolutionnaire sur la cryptographie et la résolution de problèmes."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Décrivez la technologie blockchain et ses applications au-delà des cryptomonnaies."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Discutez des technologies d'énergie renouvelable et de leur rôle dans la lutte contre le changement climatique."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Expliquez les missions d'exploration spatiale et les défis de la colonisation de Mars."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Décrivez les avancées en biotechnologie et en génie génétique dans la médecine et l'agriculture."
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Quelles sont les implications éthiques du développement de l'intelligence artificielle ?"
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  - prompt: "Comment les réseaux de neurones apprennent-ils et prennent-ils des décisions ?"
+    system_prompt: "Vous êtes un assistant utile. Veuillez répondre en français."
+    lang: "fr"
+
+  # German Prompts
+  - prompt: "Erklären Sie ausführlich die Geschichte, den aktuellen Stand und das zukünftige Potenzial der künstlichen Intelligenz."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Beschreiben Sie Machine-Learning-Algorithmen und ihre praktischen Anwendungen in verschiedenen Branchen."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Diskutieren Sie die Zukunft der Technologie und Automatisierung, einschließlich potenzieller Auswirkungen auf Gesellschaft und Beschäftigung."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Erklären Sie Quantencomputing und seine revolutionären Auswirkungen auf Kryptographie und Problemlösung."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Beschreiben Sie Blockchain-Technologie und ihre Anwendungen jenseits von Kryptowährungen."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Diskutieren Sie erneuerbare Energietechnologien und ihre Rolle im Kampf gegen den Klimawandel."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Erklären Sie Weltraumforschungsmissionen und die Herausforderungen der Mars-Kolonisierung."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Beschreiben Sie Fortschritte in der Biotechnologie und Gentechnik in Medizin und Landwirtschaft."
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Welche ethischen Auswirkungen hat die Entwicklung künstlicher Intelligenz?"
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  - prompt: "Wie lernen neuronale Netze und treffen Entscheidungen?"
+    system_prompt: "Sie sind ein hilfreicher Assistent. Bitte antworten Sie auf Deutsch."
+    lang: "de"
+
+  # Italian Prompts
+  - prompt: "Spiegate in dettaglio la storia, lo stato attuale e il potenziale futuro dell'intelligenza artificiale."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Descrivete gli algoritmi di machine learning e le loro applicazioni pratiche in vari settori industriali."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Discutete il futuro della tecnologia e dell'automazione, inclusi i potenziali impatti sulla società e l'occupazione."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Spiegate il quantum computing e il suo impatto rivoluzionario sulla crittografia e la risoluzione dei problemi."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Descrivete la tecnologia blockchain e le sue applicazioni oltre le criptovalute."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Discutete le tecnologie per le energie rinnovabili e il loro ruolo nella lotta al cambiamento climatico."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Spiegate le missioni di esplorazione spaziale e le sfide della colonizzazione di Marte."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Descrivete i progressi in biotecnologia e ingegneria genetica in medicina e agricoltura."
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Quali sono le implicazioni etiche dello sviluppo dell'intelligenza artificiale?"
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  - prompt: "Come imparano e prendono decisioni le reti neurali?"
+    system_prompt: "Sei un assistente utile. Per favore rispondi in italiano."
+    lang: "it"
+
+  # Additional Short Prompts for Variety
+  - prompt: "What is the meaning of life?"
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Explain photosynthesis simply."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "How do computers work?"
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "What is democracy?"
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "Explain gravity."
+    system_prompt: "You are a helpful assistant. Please answer in English."
+    lang: "en"
+
+  - prompt: "什么是生命的意义？"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "简单解释光合作用。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "计算机是如何工作的？"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "什么是民主？"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "解释重力。"
+    system_prompt: "你是一个有用的助手。请用中文回答。"
+    lang: "zh"
+
+  - prompt: "人生の意味は何ですか？"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "光合成を簡単に説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "コンピューターはどのように動作しますか？"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "民主主義とは何ですか？"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"
+
+  - prompt: "重力について説明してください。"
+    system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
+    lang: "ja"

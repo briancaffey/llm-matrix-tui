@@ -1,0 +1,11 @@
+services:
+  matrix-tui:
+    build: .
+    env_file: .env
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+      - /app/.venv # Exclude venv from volume mount
+    working_dir: /app
+    command: ["uv", "run", "python", "-m", "matrix_tui"]
