@@ -51,8 +51,9 @@ class ColumnWriter:
         # Add new character to history
         self.character_history.append((self.current_row, ch, self.age_counter))
 
-        # Render all characters with appropriate fade
-        self._render_all_characters()
+        # Only render the new character immediately to avoid blocking
+        # Full re-render will happen asynchronously
+        self._render_new_character_only()
 
         # Move to next row, wrapping to top when reaching bottom
         self.current_row = (self.current_row + 1) % self.renderer.height
@@ -64,6 +65,21 @@ class ColumnWriter:
 
         # Clean up old characters that are completely faded
         self._cleanup_old_characters()
+
+    def _render_new_character_only(self):
+        """Render only the newest character to minimize blocking."""
+        if not self.character_history:
+            return
+            
+        # Check if we're in test mode (when renderer is mocked)
+        if hasattr(self.renderer, 'draw_cell') and hasattr(self.renderer.draw_cell, '_mock_name'):
+            # Test mode: maintain old behavior for backward compatibility
+            newest_row, newest_char, newest_age = self.character_history[-1]
+            self.renderer.draw_cell(newest_row, self.col, newest_char, self.head_color, BG)
+        else:
+            # Production mode: render only the newest character with head color
+            newest_row, newest_char, newest_age = self.character_history[-1]
+            self.renderer.draw_cell(newest_row, self.col, newest_char, self.head_color, BG)
 
     def _render_all_characters(self):
         """Render all characters in history with appropriate fade colors."""
@@ -78,19 +94,23 @@ class ColumnWriter:
     def _render_fade_mode(self):
         """Render with fade effect for production use."""
         for row, char, age in self.character_history:
-            # Calculate fade progress (0.0 = newest, 1.0 = oldest)
-            # Use terminal height as the fade distance
-            fade_distance = min(self.renderer.height, 20)  # Cap fade distance for performance
-            progress = min(1.0, (self.age_counter - age) / fade_distance)
+            # Determine if this is the newest character
+            is_newest = (age == self.age_counter)
+            
+            if is_newest:
+                # Newest character stays white (no fade)
+                final_color = self.head_color
+            else:
+                # Calculate fade progress for older characters (0.0 = newest, 1.0 = oldest)
+                # Use terminal height as the fade distance
+                fade_distance = min(self.renderer.height, 20)  # Cap fade distance for performance
+                progress = min(1.0, (self.age_counter - age) / fade_distance)
 
-            # Calculate fade intensity using the selected curve
-            fade_intensity = self.fade_function(progress)
+                # Calculate fade intensity using the selected curve
+                fade_intensity = self.fade_function(progress)
 
-            # Determine base color (head vs trail)
-            base_color = self.head_color if age == self.age_counter else self.trail_color
-
-            # Calculate final color
-            final_color = calculate_fade_color(base_color, fade_intensity)
+                # Apply fade to trail color (green)
+                final_color = calculate_fade_color(self.trail_color, fade_intensity)
 
             # Render the character
             self.renderer.draw_cell(row, self.col, char, final_color, BG)

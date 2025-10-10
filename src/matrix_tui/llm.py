@@ -19,7 +19,7 @@ class LLMClient:
         self.model = config["model"]
 
     async def stream_response(
-        self, system: str, user: str, on_fragment: Callable[[str], Awaitable[None]], max_tokens: int = 2000
+        self, system: str, user: str, on_fragment: Callable[[str], Awaitable[None]], max_tokens: int = 100
     ):
         """Stream a response from the LLM.
 

@@ -70,8 +70,19 @@ class StreamSupervisor:
             task = asyncio.create_task(self._stream_for_writer(writer))
             tasks.append(task)
 
+        # Start background fade rendering task
+        fade_task = asyncio.create_task(self._fade_renderer())
+
         # Wait for all streams to complete
-        await asyncio.gather(*tasks)
+        try:
+            await asyncio.gather(*tasks)
+        finally:
+            # Cancel the fade renderer when streams complete
+            fade_task.cancel()
+            try:
+                await fade_task
+            except asyncio.CancelledError:
+                pass
 
 
     async def _stream_for_writer(self, writer: ColumnWriter):
@@ -99,6 +110,22 @@ class StreamSupervisor:
             )
         except Exception as e:
             print(f"Error in stream for column {writer.col}: {e}")
+
+    async def _fade_renderer(self):
+        """Background task to periodically update fade effects for all columns."""
+        while True:
+            try:
+                # Update fade effects for all writers
+                for writer in self.writers:
+                    writer._render_fade_mode()
+                
+                # Small delay to prevent excessive CPU usage
+                await asyncio.sleep(0.1)  # Update fade effects 10 times per second
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                print(f"Error in fade renderer: {e}")
+                await asyncio.sleep(0.1)
 
     def on_resize(self):
         """Handle terminal resize by updating dimensions and repainting background."""
