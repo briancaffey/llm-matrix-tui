@@ -53,7 +53,7 @@ async def test_stream_response_prints_tokens(capsys):
             {"role": "user", "content": "user message"},
         ],
         stream=True,
-        max_tokens=2000,
+        max_tokens=50,
     )
 
 

@@ -43,7 +43,9 @@ def exponential_fade(progress: float) -> float:
     return max(0.0, math.exp(-3.0 * progress))
 
 
-def interpolate_color(start_color: Tuple[int, int, int], end_color: Tuple[int, int, int], factor: float) -> Tuple[int, int, int]:
+def interpolate_color(
+    start_color: Tuple[int, int, int], end_color: Tuple[int, int, int], factor: float
+) -> Tuple[int, int, int]:
     """Interpolate between two RGB colors.
 
     Args:
@@ -62,7 +64,9 @@ def interpolate_color(start_color: Tuple[int, int, int], end_color: Tuple[int, i
     return (max(0, min(255, r)), max(0, min(255, g)), max(0, min(255, b)))
 
 
-def calculate_fade_color(base_color: Tuple[int, int, int], fade_intensity: float) -> Tuple[int, int, int]:
+def calculate_fade_color(
+    base_color: Tuple[int, int, int], fade_intensity: float
+) -> Tuple[int, int, int]:
     """Calculate the faded color based on intensity.
 
     Args:

@@ -387,3 +387,112 @@ prompts:
   - prompt: "重力について説明してください。"
     system_prompt: "あなたは親切なアシスタントです。日本語で答えてください。"
     lang: "ja"
+
+  # Python Programming Questions (LeetCode-style)
+  - prompt: "Write a Python function to find the maximum element in a list of integers. Include time and space complexity analysis."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to reverse a string without using built-in reverse methods. Show multiple approaches."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to check if a number is prime. Optimize for efficiency and explain your approach."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to find the factorial of a number using both iterative and recursive approaches."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the first non-repeating character in a string. Handle edge cases."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to merge two sorted lists into one sorted list. Analyze time complexity."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the longest common prefix among an array of strings."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to check if a string is a palindrome. Ignore case and non-alphanumeric characters."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the two numbers in an array that sum to a target value. Return their indices."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to remove duplicates from a sorted array in-place. Return the new length."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to implement binary search on a sorted array. Include error handling."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to find the maximum subarray sum using Kadane's algorithm."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to generate the first n numbers in the Fibonacci sequence. Compare iterative vs recursive."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to check if two strings are anagrams of each other."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the missing number in an array of consecutive integers from 1 to n."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to rotate an array to the right by k steps. Do it in-place with O(1) extra space."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the majority element in an array (appears more than n/2 times)."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to convert a Roman numeral string to an integer."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the longest substring without repeating characters."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to validate if parentheses, brackets, and braces are properly matched."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to find the intersection of two arrays. Handle duplicates appropriately."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to find the kth largest element in an unsorted array."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to implement a simple calculator that can handle +, -, *, / operations."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to find all permutations of a given string."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to implement a stack using only queues, or a queue using only stacks."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Implement a Python function to find the diameter of a binary tree (maximum path length between any two nodes)."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"
+
+  - prompt: "Write a Python function to detect if a linked list has a cycle using Floyd's cycle detection algorithm."
+    system_prompt: "You are a helpful coding assistant. Provide a complete Python solution with clear explanations."
+    lang: "en"

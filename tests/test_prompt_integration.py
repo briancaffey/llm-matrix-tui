@@ -50,10 +50,14 @@ async def test_supervisor_uses_different_prompts():
     # Mock the render task
     supervisor.render_task = AsyncMock()
 
-    # Test the _stream_for_writer method
-    await supervisor._stream_for_writer(mock_writers[0])
-    await supervisor._stream_for_writer(mock_writers[1])
-    await supervisor._stream_for_writer(mock_writers[2])
+    # Add required attributes for _stream_single_request
+    supervisor.available_columns = set(range(3))
+    supervisor.active_streams = {}
+
+    # Test the _stream_single_request method
+    await supervisor._stream_single_request(mock_writers[0], 0)
+    await supervisor._stream_single_request(mock_writers[1], 1)
+    await supervisor._stream_single_request(mock_writers[2], 2)
 
     # Verify that different prompts were used
     assert mock_client.stream_response.call_count == 3
