@@ -6,14 +6,23 @@ from matrix_tui.vertical_column import SingleColumnWriter
 from matrix_tui.renderer import HEAD_FG, TRAIL_FG, BG
 
 
+def create_mock_renderer(height=5):
+    """Create a mock renderer with color properties set."""
+    mock_renderer = Mock()
+    mock_renderer.height = height
+    mock_renderer.head_color = HEAD_FG
+    mock_renderer.trail_color = TRAIL_FG
+    mock_renderer.background_color = BG
+    return mock_renderer
+
+
 class TestWriterColorRepaint:
     """Test the color repaint behavior of SingleColumnWriter."""
 
     def test_first_character_draws_white(self):
         """Test that the first character is drawn with white foreground."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -25,8 +34,7 @@ class TestWriterColorRepaint:
     def test_second_character_repaints_first_then_draws_new(self):
         """Test that second character repaints first as green, then draws new as white."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -45,8 +53,7 @@ class TestWriterColorRepaint:
     def test_sequence_ab_correct_order(self):
         """Test the exact sequence for characters A and B."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -69,8 +76,7 @@ class TestWriterColorRepaint:
     def test_three_characters_sequence(self):
         """Test repaint behavior with three characters."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -97,8 +103,7 @@ class TestWriterColorRepaint:
     def test_skip_control_characters(self):
         """Test that newline and carriage return are skipped."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -120,8 +125,7 @@ class TestWriterColorRepaint:
     def test_empty_string_skipped(self):
         """Test that empty strings are skipped."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act

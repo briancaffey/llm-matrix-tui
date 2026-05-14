@@ -53,7 +53,7 @@ class LLMClient:
         system: str,
         user: str,
         on_fragment: Callable[[str], Awaitable[None]],
-        max_tokens: int = 50,
+        max_tokens: int = 200,
     ):
         """Stream a response from the LLM.
 
@@ -76,7 +76,15 @@ class LLMClient:
 
             async for event in response:
                 delta = event.choices[0].delta
-                if delta and delta.content:
+                if not delta:
+                    continue
+                # Reasoning models (e.g. Qwen3.6, DeepSeek-R1) emit thinking
+                # tokens under `delta.reasoning` before any `delta.content`.
+                # Forward both so the rain visualizes the full token stream.
+                reasoning = getattr(delta, "reasoning", None)
+                if reasoning:
+                    await on_fragment(reasoning)
+                if delta.content:
                     await on_fragment(delta.content)
 
         except Exception as e:

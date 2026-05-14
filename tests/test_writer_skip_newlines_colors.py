@@ -6,14 +6,23 @@ from matrix_tui.vertical_column import SingleColumnWriter
 from matrix_tui.renderer import HEAD_FG, TRAIL_FG, BG
 
 
+def create_mock_renderer(height=5):
+    """Create a mock renderer with color properties set."""
+    mock_renderer = Mock()
+    mock_renderer.height = height
+    mock_renderer.head_color = HEAD_FG
+    mock_renderer.trail_color = TRAIL_FG
+    mock_renderer.background_color = BG
+    return mock_renderer
+
+
 class TestWriterSkipNewlinesColors:
     """Test that control characters are properly skipped while maintaining color logic."""
 
     def test_skip_newlines_between_printable_chars(self):
         """Test that newlines between printable chars don't break repaint logic."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -42,8 +51,7 @@ class TestWriterSkipNewlinesColors:
     def test_skip_multiple_control_chars(self):
         """Test skipping multiple consecutive control characters."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -65,8 +73,7 @@ class TestWriterSkipNewlinesColors:
     def test_control_chars_at_start(self):
         """Test that control characters at the start are properly skipped."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -87,8 +94,7 @@ class TestWriterSkipNewlinesColors:
     def test_control_chars_at_end(self):
         """Test that control characters at the end don't affect the sequence."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -109,8 +115,7 @@ class TestWriterSkipNewlinesColors:
     def test_mixed_printable_and_control_chars(self):
         """Test complex sequence with mixed printable and control characters."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act
@@ -143,8 +148,7 @@ class TestWriterSkipNewlinesColors:
     def test_empty_strings_skipped(self):
         """Test that empty strings are properly skipped."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 5
+        mock_renderer = create_mock_renderer()
         writer = SingleColumnWriter(mock_renderer)
 
         # Act

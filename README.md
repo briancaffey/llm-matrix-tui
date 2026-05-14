@@ -2,11 +2,146 @@
 
 A Python-based Terminal User Interface for visualizing high-throughput LLM streaming in a Matrix-style rain effect.
 
-**Current Version:** 0.0.2 (Multilingual Prompts & Enhanced Features)
+**Current Version:** 0.0.3 (Themes, Animation & Image Mode)
 
 ## Overview
 
 Matrix Rain TUI provides a real-time visualization of concurrent LLM streaming operations, displaying them as falling characters in the style of the Matrix movie. The application supports multiple concurrent streams with multilingual prompts, creating a dynamic and visually appealing demonstration of AI capabilities across different languages and topics.
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              __main__.py                                     │
+│                         (CLI Entry Point)                                    │
+│  Parses args: --theme, --animation-preset, --image, --columns, etc.        │
+└─────────────────────────────────┬───────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           StreamSupervisor                                   │
+│                      (Orchestration Layer)                                   │
+│                                                                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
+│  │ LLMClient    │  │ Renderer     │  │ Animation    │  │ Image        │    │
+│  │              │  │ (+ Theme)    │  │ Config       │  │ Controller   │    │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘    │
+│         │                 │                 │                 │             │
+│         │    Streams LLM  │   Draws to      │  Controls       │  Modulates  │
+│         │    responses    │   terminal      │  timing/effects │  brightness │
+│         ▼                 ▼                 ▼                 ▼             │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │                         ColumnWriter[]                                │  │
+│  │                    (Per-Column Rendering)                             │  │
+│  │                                                                       │  │
+│  │   Col 0    Col 1    Col 2    Col 3    Col 4    ...    Col N          │  │
+│  │    ▼        ▼        ▼        ▼        ▼              ▼              │  │
+│  │   ┌─┐      ┌─┐      ┌─┐      ┌─┐      ┌─┐            ┌─┐             │  │
+│  │   │A│      │ｱ│      │Б│      │中│      │@│            │#│             │  │
+│  │   │B│      │ｲ│      │В│      │文│      │$│            │%│             │  │
+│  │   │C│      │ｳ│      │Г│      │字│      │&│            │^│             │  │
+│  │   │ │      │ │      │ │      │ │      │ │            │ │             │  │
+│  │   └─┘      └─┘      └─┘      └─┘      └─┘            └─┘             │  │
+│  │    │        │        │        │        │              │              │  │
+│  │    └────────┴────────┴────────┴────────┴──────────────┘              │  │
+│  │                         ▼                                             │  │
+│  │              ┌─────────────────────┐                                  │  │
+│  │              │     fade_math.py    │                                  │  │
+│  │              │  (Color Fade Calc)  │                                  │  │
+│  │              └─────────────────────┘                                  │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           Supporting Modules                                 │
+├─────────────────┬─────────────────┬─────────────────┬───────────────────────┤
+│   themes.py     │  animation.py   │  image_mode.py  │   prompt_loader.py    │
+├─────────────────┼─────────────────┼─────────────────┼───────────────────────┤
+│ ColorTheme      │ AnimationConfig │ ImageMap        │ PromptLoader          │
+│ ThemeRegistry   │ ColumnAnim-     │ ImageMode-      │ (YAML prompts)        │
+│                 │   State         │   Controller    │                       │
+│ Presets:        │ Presets:        │                 │ Languages:            │
+│ - classic       │ - calm          │ Features:       │ - en, zh, ja, ko      │
+│ - nvidia        │ - default       │ - brightness    │ - ru, th, fr, de, it  │
+│ - amber         │ - intense       │   mapping       │                       │
+│ - cyan          │ - chaos         │ - column        │                       │
+│ - hacker        │                 │   activity      │                       │
+│ - purple        │ Features:       │ - position      │                       │
+│ - fire          │ - fall speed    │   modulation    │                       │
+│ - ice           │ - trail length  │                 │                       │
+│ - blood         │ - flash effects │                 │                       │
+│ - gold          │ - char mutation │                 │                       │
+│                 │ - density ctrl  │                 │                       │
+└─────────────────┴─────────────────┴─────────────────┴───────────────────────┘
+
+Data Flow:
+──────────
+1. User runs CLI with options (theme, animation, image, columns)
+2. StreamSupervisor initializes Renderer with theme colors
+3. For each column: ColumnWriter created with animation state
+4. LLMClient streams responses → characters fed to ColumnWriters
+5. Fade renderer (60fps) updates colors based on:
+   - Theme colors (head_fg, trail_fg, background)
+   - Animation state (flash, mutation, trail length)
+   - Image brightness (if image mode enabled)
+6. blessed library renders to terminal
+```
+
+### Mermaid Diagram
+
+```mermaid
+flowchart TB
+    subgraph CLI["__main__.py (CLI)"]
+        args["Parse Args<br/>--theme, --animation-preset<br/>--image, --columns"]
+    end
+
+    subgraph Config["Configuration"]
+        themes["themes.py<br/>ColorTheme<br/>ThemeRegistry"]
+        animation["animation.py<br/>AnimationConfig<br/>ColumnAnimationState"]
+        image["image_mode.py<br/>ImageMap<br/>ImageModeController"]
+        prompts["prompt_loader.py<br/>PromptLoader"]
+    end
+
+    subgraph Core["Core Components"]
+        supervisor["StreamSupervisor<br/>(Orchestration)"]
+        renderer["Renderer<br/>(Terminal Output)"]
+        llm["LLMClient<br/>(API Streaming)"]
+    end
+
+    subgraph Columns["Column Writers"]
+        cw1["ColumnWriter 0"]
+        cw2["ColumnWriter 1"]
+        cw3["ColumnWriter 2"]
+        cwn["ColumnWriter N"]
+    end
+
+    subgraph Rendering["Rendering Pipeline"]
+        fade["fade_math.py<br/>Color Calculations"]
+        terminal["Terminal<br/>(blessed)"]
+    end
+
+    args --> supervisor
+    themes --> renderer
+    animation --> supervisor
+    image --> supervisor
+    prompts --> supervisor
+
+    supervisor --> renderer
+    supervisor --> llm
+    supervisor --> cw1 & cw2 & cw3 & cwn
+
+    llm -->|"stream<br/>characters"| cw1 & cw2 & cw3 & cwn
+
+    cw1 & cw2 & cw3 & cwn --> fade
+    fade --> renderer
+    renderer --> terminal
+
+    style CLI fill:#e1f5fe
+    style Config fill:#fff3e0
+    style Core fill:#e8f5e9
+    style Columns fill:#fce4ec
+    style Rendering fill:#f3e5f5
+```
 
 ## Setup Options
 
@@ -88,6 +223,74 @@ docker run -it --env-file .env matrix-tui
 | `make install` | Install dependencies |
 | `make clean` | Clean up build artifacts |
 | `docker compose up --build` | Build and run with Docker Compose |
+
+## Testing New Features
+
+### Theme System
+
+```bash
+# List all available themes
+uv run python -m matrix_tui --list-themes
+
+# Run with classic Matrix green theme
+uv run python -m matrix_tui -c 5 --theme classic
+
+# Run with amber retro terminal theme
+uv run python -m matrix_tui -c 5 --theme amber
+
+# Run with fire theme (yellow head, orange-red trail)
+uv run python -m matrix_tui -c 5 --theme fire
+
+# Available themes: classic, nvidia, amber, cyan, hacker, purple, fire, ice, blood, gold
+```
+
+### Animation Presets
+
+```bash
+# Calm preset - slow, sparse, minimal effects
+uv run python -m matrix_tui -c 10 --animation-preset calm
+
+# Intense preset - fast, dense, frequent effects
+uv run python -m matrix_tui -c 10 --animation-preset intense
+
+# Chaos preset - maximum randomness and effects
+uv run python -m matrix_tui -c 10 --animation-preset chaos
+
+# Custom animation settings
+uv run python -m matrix_tui -c 10 --fall-speed 0.3,3.0 --flash-prob 0.05 --mutation-prob 0.02
+
+# Dense columns with intense effects
+uv run python -m matrix_tui -c 20 --density 0.8 --animation-preset intense
+```
+
+### Image Visualization Mode
+
+```bash
+# Display an image through the rain effect (sample image included in repo)
+uv run python -m matrix_tui -c 40 --image src/matrix.jpg
+
+# Image mode with custom threshold (lower = more active columns)
+uv run python -m matrix_tui -c 40 --image src/matrix.jpg --image-threshold 0.1
+
+# Inverted image mode (dark areas become bright)
+uv run python -m matrix_tui -c 40 --image src/matrix.jpg --image-invert
+```
+
+### Combining Features
+
+```bash
+# Fire theme with intense animation
+uv run python -m matrix_tui -c 15 --theme fire --animation-preset intense
+
+# Ice theme with calm animation
+uv run python -m matrix_tui -c 10 --theme ice --animation-preset calm
+
+# Image mode with purple theme
+uv run python -m matrix_tui -c 40 --image src/matrix.jpg --theme purple
+
+# Full combination: theme + animation + custom settings
+uv run python -m matrix_tui -c 20 --theme hacker --animation-preset intense --density 0.7
+```
 
 ## Configuration
 
@@ -171,17 +374,25 @@ If the prompts file cannot be loaded or is invalid, the application will fall ba
 ```
 matrix-tui/
 ├── src/
+│   ├── matrix.jpg            # Sample image for image mode
 │   └── matrix_tui/
 │       ├── __init__.py
-│       ├── __main__.py
-│       ├── config.py
-│       ├── llm.py
-│       ├── prompt_loader.py
-│       ├── renderer.py
-│       ├── supervisor.py
-│       └── vertical_column.py
+│       ├── __main__.py       # CLI entry point
+│       ├── animation.py      # Animation config & presets
+│       ├── config.py         # Environment config
+│       ├── fade_math.py      # Color fade calculations
+│       ├── image_mode.py     # Image visualization mode
+│       ├── llm.py            # LLM client
+│       ├── prompt_loader.py  # YAML prompt loading
+│       ├── renderer.py       # Terminal rendering
+│       ├── supervisor.py     # Stream orchestration
+│       ├── themes.py         # Color themes
+│       └── vertical_column.py # Per-column rendering
 ├── tests/
-│   └── test_*.py
+│   ├── test_animation.py     # Animation tests
+│   ├── test_image_mode.py    # Image mode tests
+│   ├── test_themes.py        # Theme tests
+│   └── test_*.py             # Other tests
 ├── prompts.yml
 ├── .env.sample
 ├── .gitignore
@@ -197,7 +408,7 @@ matrix-tui/
 
 ### Dependencies
 
-- **Core:** `python-dotenv` for environment variable loading, `openai` for LLM API access, `blessed` for terminal UI, `pyyaml` for prompts configuration
+- **Core:** `python-dotenv` for environment variable loading, `openai` for LLM API access, `blessed` for terminal UI, `pyyaml` for prompts configuration, `Pillow` for image visualization mode
 - **Development:** `pytest` for testing, `black` for code formatting
 
 ### Code Formatting
@@ -215,6 +426,7 @@ uv run pytest
 
 ## Features
 
+### Core Features
 - **Multilingual Support**: Prompts in 9 different languages (English, Chinese, Japanese, Korean, Russian, Thai, French, German, Italian)
 - **Concurrent Streaming**: Support for multiple parallel LLM streams (up to terminal width)
 - **Random Prompt Selection**: Each column gets a unique, randomly selected prompt
@@ -223,14 +435,34 @@ uv run pytest
 - **Docker Support**: Containerized deployment options
 - **Robust Error Handling**: Fallback prompts ensure continuous operation
 
+### Theme System
+- **10 Built-in Themes**: classic, nvidia, amber, cyan, hacker, purple, fire, ice, blood, gold
+- **Custom Themes**: Load custom themes from JSON files
+- **Theme Listing**: View all available themes with `--list-themes`
+
+### Animation Effects
+- **4 Animation Presets**: calm, default, intense, chaos
+- **Variable Fall Speeds**: Each column has randomized speed
+- **Flash Effects**: Occasional bright flashes on characters
+- **Character Mutation**: Characters randomly change as they age (Matrix-style)
+- **Density Control**: Control what fraction of columns are active
+- **Configurable Trail Length**: Adjust fade trail length
+
+### Image Visualization Mode
+- **Image-to-Rain Mapping**: Display images through the rain effect (like Neo seeing the Matrix)
+- **Brightness Modulation**: Bright image areas = more active, brighter rain
+- **Activity Threshold**: Control minimum brightness for column activity
+- **Invert Mode**: Swap bright and dark areas
+
 ## Next Steps
 
 Future enhancements may include:
 - Additional language support
 - Prompt categories and filtering
 - Performance optimizations
-- Enhanced visual effects
 - Configuration UI
+- Audio-reactive mode
+- Custom theme editor
 
 ## License
 

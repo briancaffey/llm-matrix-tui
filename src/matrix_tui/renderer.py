@@ -1,8 +1,12 @@
 """Terminal renderer using blessed for clean text output."""
 
+from typing import Optional, Tuple
+
 from blessed import Terminal
 
-# Color constants
+from .themes import ColorTheme, get_default_theme
+
+# Legacy color constants for backward compatibility
 HEAD_FG = (255, 255, 255)  # White for newest character
 TRAIL_FG = (118, 185, 0)  # NVIDIA green (#76b900) for older characters
 BG = (0, 0, 0)  # Black background
@@ -11,18 +15,48 @@ BG = (0, 0, 0)  # Black background
 class Renderer:
     """Encapsulates terminal control and rendering methods."""
 
-    def __init__(self):
-        """Initialize the renderer with a blessed Terminal instance."""
+    def __init__(self, theme: Optional[ColorTheme] = None):
+        """Initialize the renderer with a blessed Terminal instance.
+
+        Args:
+            theme: Optional ColorTheme to use. If None, uses default (nvidia) theme.
+        """
         self.term = Terminal()
         self.current_x = 0
         self.current_y = 0
         self.height = 0
         self.width = 0
+        self._theme = theme if theme is not None else get_default_theme()
+
+    @property
+    def theme(self) -> ColorTheme:
+        """Get the current color theme."""
+        return self._theme
+
+    @theme.setter
+    def theme(self, value: ColorTheme) -> None:
+        """Set the color theme."""
+        self._theme = value
+
+    @property
+    def head_color(self) -> Tuple[int, int, int]:
+        """Get the head (newest character) color from the current theme."""
+        return self._theme.head_fg
+
+    @property
+    def trail_color(self) -> Tuple[int, int, int]:
+        """Get the trail color from the current theme."""
+        return self._theme.trail_fg
+
+    @property
+    def background_color(self) -> Tuple[int, int, int]:
+        """Get the background color from the current theme."""
+        return self._theme.background
 
     def init(self):
         """Initialize the terminal for rendering.
 
-        Clears the screen, hides the cursor, and fills background with black.
+        Clears the screen, hides the cursor, and fills background.
         Caches terminal dimensions for vertical rendering.
         """
         print(self.term.clear(), end="", flush=True)
@@ -32,8 +66,8 @@ class Renderer:
         self.height = self.term.height
         self.width = self.term.width
 
-        # Fill entire terminal with black background
-        self.fill_background(BG)
+        # Fill entire terminal with theme's background color
+        self.fill_background(self.background_color)
 
     def refresh_dims(self):
         """Update cached terminal dimensions.

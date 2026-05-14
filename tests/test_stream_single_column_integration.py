@@ -7,6 +7,17 @@ from matrix_tui.renderer import Renderer, HEAD_FG, TRAIL_FG, BG
 from matrix_tui.vertical_column import SingleColumnWriter
 
 
+def create_mock_renderer(height=10):
+    """Create a mock renderer with color properties set."""
+    mock_renderer = Mock()
+    mock_renderer.height = height
+    mock_renderer.draw_cell = Mock()
+    mock_renderer.head_color = HEAD_FG
+    mock_renderer.trail_color = TRAIL_FG
+    mock_renderer.background_color = BG
+    return mock_renderer
+
+
 class TestStreamSingleColumnIntegration:
     """Integration tests for streaming with SingleColumnWriter."""
 
@@ -14,9 +25,7 @@ class TestStreamSingleColumnIntegration:
     async def test_stream_fragment_processing(self):
         """Test that stream fragments are processed character by character."""
         # Mock renderer
-        mock_renderer = Mock()
-        mock_renderer.height = 10
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=10)
 
         # Create writer
         writer = SingleColumnWriter(mock_renderer)
@@ -102,9 +111,7 @@ class TestStreamSingleColumnIntegration:
     async def test_newline_skipping_in_stream(self):
         """Test that newlines in stream fragments are properly skipped."""
         # Mock renderer
-        mock_renderer = Mock()
-        mock_renderer.height = 10
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=10)
 
         # Create writer
         writer = SingleColumnWriter(mock_renderer)
@@ -159,9 +166,7 @@ class TestStreamSingleColumnIntegration:
     async def test_empty_fragments_handling(self):
         """Test handling of empty fragments in stream."""
         # Mock renderer
-        mock_renderer = Mock()
-        mock_renderer.height = 10
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=10)
 
         # Create writer
         writer = SingleColumnWriter(mock_renderer)

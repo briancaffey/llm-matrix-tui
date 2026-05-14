@@ -2,11 +2,18 @@
 
 import asyncio
 import random
-from typing import List
+import time
+from typing import TYPE_CHECKING, Dict, List, Optional, Set
+
+from .animation import AnimationConfig
 from .llm import LLMClient
-from .renderer import Renderer, BG
-from .vertical_column import ColumnWriter
 from .prompt_loader import PromptLoader
+from .renderer import Renderer
+from .themes import ColorTheme
+from .vertical_column import ColumnWriter
+
+if TYPE_CHECKING:
+    from .image_mode import ImageModeController
 
 
 class StreamSupervisor:
@@ -17,9 +24,12 @@ class StreamSupervisor:
         client: LLMClient,
         renderer: Renderer,
         prompts_file: str = "prompts.yml",
-        include_langs: List[str] = None,
-        exclude_langs: List[str] = None,
+        include_langs: Optional[List[str]] = None,
+        exclude_langs: Optional[List[str]] = None,
         fade_curve: str = "linear",
+        theme: Optional[ColorTheme] = None,
+        animation_config: Optional[AnimationConfig] = None,
+        image_controller: Optional["ImageModeController"] = None,
     ):
         """Initialize the stream supervisor.
 
@@ -30,13 +40,32 @@ class StreamSupervisor:
             include_langs: List of language codes to include (e.g., ['en', 'zh', 'ja'])
             exclude_langs: List of language codes to exclude (e.g., ['en', 'zh'])
             fade_curve: Type of fade curve to use ('linear', 'quadratic', 'exponential')
+            theme: Optional ColorTheme to use. If provided, updates renderer's theme.
+            animation_config: Optional animation configuration for visual effects.
+            image_controller: Optional image mode controller for image visualization.
         """
         self.client = client
         self.renderer = renderer
         self.prompt_loader = PromptLoader(prompts_file, include_langs, exclude_langs)
         self.fade_curve = fade_curve
+        self.animation_config = animation_config
+        self.image_controller = image_controller
         self.writers: List[ColumnWriter] = []
         self.tasks: List[asyncio.Task] = []
+
+        # Animation timing
+        self._last_frame_time: float = 0.0
+        self._start_time: float = 0.0
+
+        # Frame counter for benchmarking; harmless in non-bench runs.
+        self._frame_count: int = 0
+
+        # Track column start delays
+        self._column_start_times: Dict[int, float] = {}
+
+        # Set theme on renderer if provided
+        if theme is not None:
+            self.renderer.theme = theme
 
     async def start(self, n: int):
         """Start N concurrent LLM streams, each in its own column.
@@ -47,26 +76,49 @@ class StreamSupervisor:
         # Compute active columns based on terminal width
         active = min(n, self.renderer.width)
 
+        # Apply density control if animation config is set
+        if self.animation_config is not None:
+            active = int(active * self.animation_config.column_density)
+            active = max(1, active)  # Ensure at least 1 column
+
         # Check terminal height and warn if too small
         if self.renderer.height < 3:
-            print(
-                f"\n⚠️  WARNING: Terminal height is only {self.renderer.height} lines!"
-            )
+            print(f"\n  WARNING: Terminal height is only {self.renderer.height} lines!")
             print(
                 "   For best results, resize your terminal window to be taller (at least 10-20 lines)."
             )
             print("   With only 1 line, characters will overwrite each other.\n")
 
-        # Generate random column positions for better visual effect
-        available_positions = list(range(self.renderer.width))
-        random.shuffle(available_positions)
-        column_positions = available_positions[:active]
+        # Determine column positions based on image mode or random selection
+        if self.image_controller is not None:
+            # In image mode, use ALL columns to properly render the image
+            # The per-position brightness will control visibility
+            column_positions = list(range(self.renderer.width))
+        else:
+            # Generate random column positions for better visual effect
+            available_positions = list(range(self.renderer.width))
+            random.shuffle(available_positions)
+            column_positions = available_positions[:active]
 
         # Create writers for each active column at random positions
         self.writers = [
-            ColumnWriter(self.renderer, col, self.fade_curve)
+            ColumnWriter(
+                self.renderer,
+                col,
+                self.fade_curve,
+                self.animation_config,
+                self.image_controller,
+            )
             for col in column_positions
         ]
+
+        # Record start time for animation timing
+        self._start_time = time.monotonic()
+        self._last_frame_time = self._start_time
+
+        # Record start delays for each column
+        for i, writer in enumerate(self.writers):
+            self._column_start_times[i] = self._start_time + writer.start_delay
 
         # Start real concurrent LLM streams for each column
         # Skip content distribution in test mode (when client is mocked)
@@ -123,8 +175,22 @@ class StreamSupervisor:
                 while not self.available_columns:
                     await asyncio.sleep(0.1)
 
-                # Pick a random available column
-                column_id = random.choice(list(self.available_columns))
+                # Get current time for start delay check
+                current_time = time.monotonic()
+
+                # Filter available columns by start delay
+                ready_columns = [
+                    col_id
+                    for col_id in self.available_columns
+                    if current_time >= self._column_start_times.get(col_id, 0)
+                ]
+
+                if not ready_columns:
+                    await asyncio.sleep(0.1)
+                    continue
+
+                # Pick a random available column that's ready
+                column_id = random.choice(ready_columns)
                 self.available_columns.remove(column_id)
 
                 # Start a new stream in this column
@@ -237,9 +303,30 @@ class StreamSupervisor:
         """Background task to periodically update fade effects for all columns."""
         while True:
             try:
-                # Update fade effects for all writers
+                # Calculate delta time for animation updates
+                current_time = time.monotonic()
+                delta_time = current_time - self._last_frame_time
+                self._last_frame_time = current_time
+
+                # Update animation state and render for all writers
                 for writer in self.writers:
+                    # Update animation state
+                    writer.update_animation(delta_time)
+
+                    # Trigger random flash effects if configured
+                    if (
+                        self.animation_config is not None
+                        and self.animation_config.should_flash()
+                    ):
+                        writer.trigger_flash()
+
+                    # Update brightness based on image mode
+                    writer.update_image_brightness()
+
+                    # Render fade effects
                     writer._render_fade_mode()
+
+                self._frame_count += 1
 
                 # Small delay for 60fps smooth animation
                 await asyncio.sleep(1 / 60)  # Update fade effects 60 times per second
@@ -252,7 +339,11 @@ class StreamSupervisor:
     def on_resize(self):
         """Handle terminal resize by updating dimensions and repainting background."""
         self.renderer.refresh_dims()
-        self.renderer.fill_background(BG)
+        self.renderer.fill_background(self.renderer.background_color)
+
+        # Update image controller if present
+        if self.image_controller is not None:
+            self.image_controller.resize(self.renderer.width, self.renderer.height)
 
         # Update writers list to only include active ones
         self.writers = [w for w in self.writers if w.col < self.renderer.width]

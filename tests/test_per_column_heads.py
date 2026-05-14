@@ -8,10 +8,13 @@ from matrix_tui.renderer import HEAD_FG, TRAIL_FG, BG
 
 @pytest.fixture
 def mock_renderer():
-    """Create a mock renderer."""
+    """Create a mock renderer with color properties."""
     renderer = Mock()
     renderer.height = 5
     renderer.width = 10
+    renderer.head_color = HEAD_FG
+    renderer.trail_color = TRAIL_FG
+    renderer.background_color = BG
     return renderer
 
 

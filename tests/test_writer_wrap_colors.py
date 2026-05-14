@@ -6,14 +6,23 @@ from matrix_tui.vertical_column import SingleColumnWriter
 from matrix_tui.renderer import HEAD_FG, TRAIL_FG, BG
 
 
+def create_mock_renderer(height=5):
+    """Create a mock renderer with color properties set."""
+    mock_renderer = Mock()
+    mock_renderer.height = height
+    mock_renderer.head_color = HEAD_FG
+    mock_renderer.trail_color = TRAIL_FG
+    mock_renderer.background_color = BG
+    return mock_renderer
+
+
 class TestWriterWrapColors:
     """Test the wrapping behavior with color repaint."""
 
     def test_wrap_behavior_with_colors(self):
         """Test that wrapping preserves color rules."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 3  # Small height to force wrapping
+        mock_renderer = create_mock_renderer(height=3)
         writer = SingleColumnWriter(mock_renderer)
 
         # Act - feed "ABCD" which should wrap
@@ -42,8 +51,7 @@ class TestWriterWrapColors:
     def test_wrap_preserves_repaint_logic(self):
         """Test that wrapping doesn't break the repaint logic."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 2  # Very small height
+        mock_renderer = create_mock_renderer(height=2)
         writer = SingleColumnWriter(mock_renderer)
 
         # Act - feed "ABC" to test wrap behavior
@@ -65,8 +73,7 @@ class TestWriterWrapColors:
     def test_multiple_wraps(self):
         """Test behavior with multiple wraps."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 2
+        mock_renderer = create_mock_renderer(height=2)
         writer = SingleColumnWriter(mock_renderer)
 
         # Act - feed "ABCDE" to get multiple wraps
@@ -101,8 +108,7 @@ class TestWriterWrapColors:
     def test_wrap_with_resize(self):
         """Test that resize maintains proper behavior after wrapping."""
         # Arrange
-        mock_renderer = Mock()
-        mock_renderer.height = 3
+        mock_renderer = create_mock_renderer(height=3)
         writer = SingleColumnWriter(mock_renderer)
 
         # Act

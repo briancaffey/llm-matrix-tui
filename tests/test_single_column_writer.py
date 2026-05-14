@@ -6,15 +6,24 @@ from matrix_tui.vertical_column import SingleColumnWriter
 from matrix_tui.renderer import HEAD_FG, TRAIL_FG, BG
 
 
+def create_mock_renderer(height=5):
+    """Create a mock renderer with color properties set."""
+    mock_renderer = Mock()
+    mock_renderer.height = height
+    mock_renderer.draw_cell = Mock()
+    mock_renderer.head_color = HEAD_FG
+    mock_renderer.trail_color = TRAIL_FG
+    mock_renderer.background_color = BG
+    return mock_renderer
+
+
 class TestSingleColumnWriter:
     """Test cases for SingleColumnWriter functionality."""
 
     def test_basic_character_writing(self):
         """Test basic character writing with wrap-around behavior."""
         # Mock renderer with height=5
-        mock_renderer = Mock()
-        mock_renderer.height = 5
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=5)
 
         writer = SingleColumnWriter(mock_renderer)
 
@@ -40,9 +49,7 @@ class TestSingleColumnWriter:
     def test_wrap_around_behavior(self):
         """Test that characters wrap to top when reaching bottom."""
         # Mock renderer with height=3
-        mock_renderer = Mock()
-        mock_renderer.height = 3
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=3)
 
         writer = SingleColumnWriter(mock_renderer)
 
@@ -68,9 +75,7 @@ class TestSingleColumnWriter:
     def test_skip_newline_and_carriage_return(self):
         """Test that newline and carriage return characters are skipped."""
         # Mock renderer with height=5
-        mock_renderer = Mock()
-        mock_renderer.height = 5
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=5)
 
         writer = SingleColumnWriter(mock_renderer)
 
@@ -94,9 +99,7 @@ class TestSingleColumnWriter:
     def test_resize_handling(self):
         """Test resize handling updates dimensions and adjusts row position."""
         # Mock renderer with initial height=5
-        mock_renderer = Mock()
-        mock_renderer.height = 5
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=5)
         mock_renderer.refresh_dims = Mock()
 
         writer = SingleColumnWriter(mock_renderer)
@@ -133,9 +136,7 @@ class TestSingleColumnWriter:
     def test_column_fixed_at_zero(self):
         """Test that column is always fixed at 0."""
         # Mock renderer
-        mock_renderer = Mock()
-        mock_renderer.height = 10
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=10)
 
         writer = SingleColumnWriter(mock_renderer)
 
@@ -152,9 +153,7 @@ class TestSingleColumnWriter:
     def test_empty_string_handling(self):
         """Test handling of empty strings."""
         # Mock renderer
-        mock_renderer = Mock()
-        mock_renderer.height = 5
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=5)
 
         writer = SingleColumnWriter(mock_renderer)
 
@@ -167,9 +166,7 @@ class TestSingleColumnWriter:
     def test_single_character_handling(self):
         """Test handling of single character."""
         # Mock renderer
-        mock_renderer = Mock()
-        mock_renderer.height = 5
-        mock_renderer.draw_cell = Mock()
+        mock_renderer = create_mock_renderer(height=5)
 
         writer = SingleColumnWriter(mock_renderer)
 
