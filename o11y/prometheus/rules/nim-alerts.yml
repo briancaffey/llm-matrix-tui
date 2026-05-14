@@ -1,0 +1,50 @@
+groups:
+  - name: vllm-alerts
+    rules:
+      - alert: HighKVCacheUsage
+        expr: vllm:kv_cache_usage_perc > 0.90
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "KV cache utilization high (>90%)"
+          description: "vllm:kv_cache_usage_perc is {{ $value }}"
+
+      - alert: RequestsBackingUp
+        expr: avg_over_time(vllm:num_requests_waiting[2m]) > 2
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "LLM requests are backing up"
+          description: "Average waiting requests > 2 for 3m"
+
+      - alert: SlowTTFTp90
+        expr: histogram_quantile(0.9, sum by (le) (rate(vllm:time_to_first_token_seconds_bucket[2m]))) > 1.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High p90 Time to First Token"
+          description: "TTFT p90 > 1.5s for 5m"
+
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(vllm:request_success_total{finished_reason="error"}[5m]))
+          /
+          clamp_min(sum(rate(vllm:request_success_total[5m])), 1e-9) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }}"
+
+      - alert: LowThroughput
+        expr: rate(vllm:generation_tokens_total[5m]) < 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low token generation throughput"
+          description: "Throughput is {{ $value }} tokens/sec"

@@ -1,0 +1,31 @@
+{
+  "duration_s": 10.036262959009036,
+  "columns_requested": 80,
+  "width": 120,
+  "height": 40,
+  "cells_drawn": 166995,
+  "bytes_written": 7707662,
+  "write_calls": 343590,
+  "frames": 457,
+  "fps": 45.53487706196206,
+  "cells_per_second": 16639.161476941692,
+  "bytes_per_second": 767981.2726589859,
+  "write_calls_per_second": 34234.85428822657,
+  "write_calls_per_frame": 751.8380743982494,
+  "avg_bytes_per_write": 22.432730871096364,
+  "cpu_time_s": 2.412894,
+  "rss_max_mb": 70.5,
+  "config": {
+    "label": "before-buffering",
+    "tokens_per_second": 50.0,
+    "tokens_per_response": 200,
+    "fade_curve": "linear",
+    "theme": "nvidia",
+    "animation_preset": null
+  },
+  "meta": {
+    "python": "3.11.12",
+    "platform": "macOS-26.4.1-arm64-arm-64bit",
+    "timestamp": 1778728730.0216472
+  }
+}

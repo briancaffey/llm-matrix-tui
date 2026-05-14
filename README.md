@@ -304,6 +304,147 @@ OPENAI_MODEL=llama-3.1-8b-instruct
 
 Docker Compose will automatically load the `.env` file.
 
+### Example LLM endpoint (vLLM + Nemotron)
+
+Reference command for the local OpenAI-compatible server this project is
+currently developed against — vLLM serving NVIDIA's Nemotron-3-Nano-Omni
+reasoning model. Note that this is a **reasoning model**: `llm.py` forwards
+both `delta.reasoning` and `delta.content`, so thinking tokens also flow
+into the rain visualization.
+
+```bash
+docker run -it \
+  --rm \
+  --pull always \
+  --name vllm-nemotron \
+  --runtime=nvidia \
+  --network host \
+  -p 8000:8000 \
+  --ipc=host \
+  -v $HOME/.cache/huggingface:/root/.cache/huggingface \
+  -e VLLM_FLASHINFER_MOE_BACKEND=latency \
+  --entrypoint bash vllm/vllm-openai:nightly \
+  -c "pip install -q nvidia-cuda-runtime-cu12 'vllm[audio]' && \
+        export LD_LIBRARY_PATH=/usr/local/lib/python3.12/dist-packages/nvidia/cuda_runtime/lib:\$LD_LIBRARY_PATH && \
+        vllm serve nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4 \
+        --served-model-name nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4 nemotron-3-nano-omni \
+        --tensor-parallel-size 1 \
+        --port 8000 --host 0.0.0.0 \
+        --max-model-len 131072 \
+        --max-num-seqs 16 \
+        --max-num-batched-tokens 8192 \
+        --gpu-memory-utilization 0.85 \
+        --quantization fp4 \
+        --moe-backend marlin \
+        --kv-cache-dtype fp8 \
+        --mamba-ssm-cache-dtype float32 \
+        --enable-prefix-caching \
+        --reasoning-parser nemotron_v3 \
+        --enable-auto-tool-choice \
+        --tool-call-parser qwen3_coder \
+        --video-pruning-rate 0.5 \
+        --limit-mm-per-prompt '{\"video\":1,\"image\":1,\"audio\":1}' \
+        --media-io-kwargs '{\"video\":{\"fps\":2,\"num_frames\":256}}' \
+        --allowed-local-media-path / \
+        --trust-remote-code"
+```
+
+Matching `.env`:
+
+```env
+OPENAI_BASE_URL=http://localhost:8000/v1
+OPENAI_API_KEY=none
+OPENAI_MODEL=nemotron-3-nano-omni
+```
+
+`--max-num-seqs 16` is the server-side concurrency cap — running more
+matrix-tui columns than this means streams will queue. Match `--columns`
+to (or below) `--max-num-seqs` for full parallelism.
+
+#### Argument reference
+
+**Docker flags**
+
+- `-it` — allocate a TTY and keep stdin open (so Ctrl-C reaches vLLM).
+- `--rm` — remove the container on exit; no leftover stopped containers.
+- `--pull always` — always pull the image before starting (catches nightly updates).
+- `--name vllm-nemotron` — fixed name so you can `docker logs vllm-nemotron`.
+- `--runtime=nvidia` — use the NVIDIA Container Runtime so the container sees the GPU.
+- `--network host` — share the host network namespace; avoids Docker's NAT overhead and gives full bandwidth.
+- `-p 8000:8000` — port publish; redundant under `--network host` but kept as documentation.
+- `--ipc=host` — share host's IPC namespace; required for PyTorch shared-memory between vLLM's worker processes (otherwise you'll see "bus error" or shared-memory exhaustion).
+- `-v $HOME/.cache/huggingface:/root/.cache/huggingface` — mount your HF cache so model weights persist between container restarts (otherwise it re-downloads on every run).
+- `-e VLLM_FLASHINFER_MOE_BACKEND=latency` — pick FlashInfer's latency-optimized MoE kernels over the throughput-optimized variant.
+- `--entrypoint bash` + `-c "..."` — override the image entrypoint to run a multi-step bash command (install extra packages, then start vLLM).
+
+**Container startup**
+
+- `pip install -q nvidia-cuda-runtime-cu12 'vllm[audio]'` — installs the audio extras and CUDA runtime libs at container start (the base image doesn't include them).
+- `export LD_LIBRARY_PATH=...` — points the dynamic linker at the freshly-installed CUDA runtime libs.
+
+**vLLM model & API flags**
+
+- `nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4` — HF model ID. 30B parameters total, MoE with ~A3B active params, NVFP4-quantized weights, reasoning-trained, omni (text+image+video+audio).
+- `--served-model-name X Y` — API aliases the model can be requested as (full HF id and the short `nemotron-3-nano-omni`). Either string works in `OPENAI_MODEL`.
+- `--tensor-parallel-size 1` — split weights across N GPUs (1 = single GPU).
+- `--port 8000 --host 0.0.0.0` — listen address.
+- `--trust-remote-code` — allow loading custom Python code from the model repo (Nemotron ships custom modeling files).
+
+**Memory & throughput knobs**
+
+- `--max-model-len 131072` — max context length (prompt + output) per request. **Largest single lever for concurrency** — see "Tuning" below.
+- `--max-num-seqs 16` — max concurrent sequences the scheduler will run. Cap on parallel streams.
+- `--max-num-batched-tokens 8192` — max total tokens (across all running seqs) processed per forward pass. Constrains how big a prefill batch can be.
+- `--gpu-memory-utilization 0.85` — fraction of GPU memory vLLM may use (weights + KV cache + activations + CUDA-graph workspace).
+- `--quantization fp4` — weight quantization, 4-bit. Already baked into NVFP4 checkpoints.
+- `--moe-backend marlin` — MoE GEMM kernel; Marlin is the fast quantized-MoE path.
+- `--kv-cache-dtype fp8` — store KV cache as fp8 (~half the memory of bf16) — already big concurrency win.
+- `--mamba-ssm-cache-dtype float32` — Nemotron is hybrid attention+Mamba; this is the dtype for Mamba's state-space cache.
+- `--enable-prefix-caching` — cache KV blocks for shared prompt prefixes; large speedup when many requests share a system prompt (true for matrix-tui).
+
+**Reasoning & tools**
+
+- `--reasoning-parser nemotron_v3` — parses the model's `<thinking>`-style output into the OpenAI streaming response's `delta.reasoning` field. `llm.py` forwards both `delta.reasoning` and `delta.content` so thinking tokens animate too.
+- `--enable-auto-tool-choice` — auto-detects tool/function calls in the output stream.
+- `--tool-call-parser qwen3_coder` — which parser format to use when extracting tool calls.
+
+**Multimodal (irrelevant to matrix-tui — text-only)**
+
+- `--video-pruning-rate 0.5` — drop 50% of video tokens before attention.
+- `--limit-mm-per-prompt '{"video":1,"image":1,"audio":1}'` — max multimodal items per prompt.
+- `--media-io-kwargs '{"video":{"fps":2,"num_frames":256}}'` — video decoding params (sample at 2 fps, max 256 frames).
+- `--allowed-local-media-path /` — directories from which `file://` media URIs may be loaded. **Security note**: `/` is permissive — fine on a local single-user machine, tighten for shared/exposed deployments.
+
+#### Tuning concurrency (max-num-seqs)
+
+vLLM logs the theoretical concurrency ceiling on startup. Look for:
+
+```
+GPU KV cache size: 20,997,734 tokens
+Maximum concurrency for 131,072 tokens per request: 160.20x
+```
+
+That's the formula: `max_concurrent ≈ KV_cache_tokens ÷ max_model_len`.
+
+The dominant lever is `--max-model-len`: drop it and concurrency rises linearly.
+For matrix-tui, prompts are ~50–200 tokens and replies are capped at 200
+(`max_tokens=200` in `llm.py`), so 4096 is plenty.
+
+Suggested matrix-tui-tuned config:
+
+```
+--max-model-len 4096                # was 131072 — 32× more KV headroom
+--max-num-seqs 64                   # was 16 — match higher headroom
+--max-num-batched-tokens 16384      # was 8192 — handle bigger prefill batches
+--gpu-memory-utilization 0.92       # was 0.85 — squeeze ~10% more KV
+# keep --enable-prefix-caching and --kv-cache-dtype fp8
+```
+
+Caveat: the theoretical max isn't the *useful* max. Per-stream throughput
+drops as concurrency rises (shared compute), and the matrix rain only needs
+~32–64 streams to saturate the screen visually. Going much higher mostly
+wastes GPU.
+
 ## Prompts Configuration
 
 The application uses a `prompts.yml` file to define multilingual prompts that are randomly selected for each streaming column. This allows for diverse, multilingual content generation.

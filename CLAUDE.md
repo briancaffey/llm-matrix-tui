@@ -10,6 +10,10 @@ endpoint), one terminal column per stream, rendered with `blessed`.
 - `uv run pytest` · `make black` · `make run`
 - `.env` keys: `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `OPENAI_MODEL`. Designed for
   local OpenAI-compatible servers (vLLM, llama.cpp, LM Studio, etc.).
+- Currently developed against vLLM serving `nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-NVFP4`
+  (served as `nemotron-3-nano-omni`, `--max-num-seqs 16`). Reasoning model — both
+  `delta.reasoning` and `delta.content` are forwarded to the rain. Full docker
+  command in README "Example LLM endpoint" section.
 
 ## Module map (src/matrix_tui/)
 
